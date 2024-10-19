@@ -63,6 +63,17 @@ Para executar os testes:
 npx playwright test
 ```
 
+Para executar os testes em modo assistido:
+```bash
+npx playwright test --headed
+```
+
+Para executar os testes em modo debug:
+```bash
+npx playwright test --debug
+```
+
+
 Para mostrar o relatório dos testes:
 ```bash
 npx playwright show-report
