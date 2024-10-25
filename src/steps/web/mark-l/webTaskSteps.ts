@@ -2,7 +2,7 @@ import { Locator, Page } from "@playwright/test";
 import { homePageSelectors } from "../../../pages/mark-l/homePage";
 import { WEB_BASE_URL } from "../../../constants/constants";
 
-export class TaskSteps {
+export class WebTaskSteps {
   constructor(private page: Page) {}
 
   async navigateToHomePage(): Promise<void> {
