@@ -7,26 +7,45 @@ test.describe('Testes da funcionalidade de tarefas', () => {
   let webTaskSteps: WebTaskSteps;
   let apiTaskSteps: ApiTaskSteps;
 
-  test.beforeEach(async ({ page, request }) => {
-    webTaskSteps = new WebTaskSteps(page);
+  test.beforeEach(async ({ page, request }, testInfo) => {
+    webTaskSteps = new WebTaskSteps(page, testInfo);
     apiTaskSteps = new ApiTaskSteps(request);
 
+    await page.setViewportSize({ width: 1920, height: 1080 });
     await webTaskSteps.navigateToHomePage();
   });
 
-  test('Verificar o cadastro de uma nova tarefa via teclado apertando enter', async () => {
-    const taskName = faker.lorem.sentence();
-    await webTaskSteps.createTaskWithKeyboard(taskName);
-
-    // Apagar tarefa via API no final do teste
-    await apiTaskSteps.deleteTaskByName(taskName);
+  test.afterEach(async () => {
+    await apiTaskSteps.deleteAllTasks();
   });
 
-  test('Verificar o cadastro de uma nova tarefa via click no botão', async ({ page }) => {
+  test('001 - Verificar o cadastro de uma nova tarefa via click no botão', async () => {
+    // Dado que eu tenho uma nova tarefa
     const taskName = faker.lorem.sentence();
+
+    // Quando faço o cadastro dessa tarefa
     await webTaskSteps.createTaskWithMouseClick(taskName);
 
-    // Apagar tarefa via API no final do teste
-    await apiTaskSteps.deleteTaskByName(taskName);
+    // Então essa tarefa deve ser exibida na lista
+    const createdTask = await webTaskSteps.getTaskItemByTestId('task-item', taskName);
+    await expect(createdTask).toHaveText(taskName);
+
+    // Captura de tela
+    await webTaskSteps.takeScreenshot(`after-creating-task-with-mouse-click_${Date.now()}`);
+  });
+
+  test('002 - Verificar o cadastro de uma nova tarefa via teclado apertando enter', async () => {
+    // Dado que eu tenho uma nova tarefa
+    const taskName = faker.lorem.sentence();
+
+    // Quando faço o cadastro dessa tarefa
+    await webTaskSteps.createTaskWithKeyboard(taskName);
+
+    // Então essa tarefa deve ser exibida na lista
+    const createdTask = await webTaskSteps.getTaskItemByTestId('task-item', taskName);
+    await expect(createdTask).toHaveText(taskName);
+
+    // Captura de tela
+    await webTaskSteps.takeScreenshot(`after-creating-task-with-keyboard_${Date.now()}`);
   });
 });
