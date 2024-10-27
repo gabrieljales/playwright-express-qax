@@ -1,8 +1,7 @@
-import { APIRequestContext, APIResponse } from "@playwright/test";
+import { APIRequestContext } from "@playwright/test";
 import { API_BASE_URL } from "../../../constants/constants";
 import { Task } from "../../../domain/entities/task";
 import { TaskNotFoundError } from "../../../domain/errors/TaskNotFoundError";
-import { UnexpectedError } from "../../../domain/errors/UnexpectedError";
 
 export class ApiTaskSteps {
   protected request: APIRequestContext;
@@ -36,5 +35,13 @@ export class ApiTaskSteps {
   async deleteTaskByName(taskName: string): Promise<void> {
       const task = await this.findTaskByName(taskName);
       await this.deleteTaskById(task.id);
+  }
+
+  async deleteAllTasks(): Promise<void> {
+      const tasks = await this .listTasks();
+
+      for (const task of tasks) {
+        await this.deleteTaskById(task.id);
+      }
   }
 }
