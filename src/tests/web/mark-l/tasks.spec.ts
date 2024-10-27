@@ -3,9 +3,10 @@ import { WebTaskSteps } from '../../../steps/web/mark-l/webTaskSteps';
 import { faker } from '@faker-js/faker';
 import { ApiTaskSteps } from '../../../steps/api/mark-l/apiTaskSteps';
 import { CreateTask } from '../../../domain/entities/createTask';
-import { homePageSelectors } from "../../../pages/mark-l/homePage";
 
-test.describe('Testes da funcionalidade de tarefas', () => {
+test.describe('Testes da funcionalidade de tarefas', {
+  tag: ['@web', '@mark-l', '@tasks', '@smoke']
+}, () => {
   let webTaskSteps: WebTaskSteps;
   let apiTaskSteps: ApiTaskSteps;
   let newTask: CreateTask;
@@ -28,7 +29,9 @@ test.describe('Testes da funcionalidade de tarefas', () => {
     await apiTaskSteps.deleteAllTasks();
   });
 
-  test('001 - Verificar o cadastro de uma nova tarefa via click no botão', async () => {
+  test('001 - Verificar o cadastro de uma nova tarefa via click no botão', {
+    tag: ['@create', '@positive']
+  }, async () => {
     // Dado que eu tenho uma nova tarefa
     // Quando faço o cadastro dessa tarefa
     await webTaskSteps.createTaskWithMouseClick(newTask.name);
@@ -41,7 +44,9 @@ test.describe('Testes da funcionalidade de tarefas', () => {
     await webTaskSteps.takeScreenshot(`after-creating-task-with-mouse-click_${Date.now()}`);
   });
 
-  test('002 - Verificar o cadastro de uma nova tarefa via teclado apertando enter', async () => {
+  test('002 - Verificar o cadastro de uma nova tarefa via teclado apertando enter', {
+    tag: ['@create', '@positive']
+  }, async () => {
     // Dado que eu tenho uma nova tarefa
 
     // Quando faço o cadastro dessa tarefa
@@ -55,7 +60,9 @@ test.describe('Testes da funcionalidade de tarefas', () => {
     await webTaskSteps.takeScreenshot(`after-creating-task-with-keyboard_${Date.now()}`);
   });
 
-  test('003 - Verificar mensagem de erro ao tentar cadastrar tarefas duplicadas', async ({ page }) => {
+  test('003 - Verificar mensagem de erro ao tentar cadastrar tarefas duplicadas', {
+    tag: ['@create', '@negative']
+  }, async () => {
     // Dado que eu tenho uma nova tarefa
 
     // Quando tento fazer o cadastro dessa tarefa duas vezes
