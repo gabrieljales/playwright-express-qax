@@ -1,4 +1,4 @@
-import { Locator, Page, TestInfo } from "@playwright/test";
+import { expect, Locator, Page, TestInfo } from "@playwright/test";
 import { homePageSelectors } from "../../../pages/mark-l/homePage";
 import { WEB_BASE_URL } from "../../../constants/constants";
 
@@ -38,6 +38,11 @@ export class WebTaskSteps {
 
   async getTaskItemByTestId(testId: string, targetText: string): Promise<Locator> {
     return this.page.getByTestId(testId).filter({ hasText: targetText })
+  }
+
+  async verifyTaskAlreadyExistsError(): Promise<void> {
+    const errorLocator = this.page.locator(homePageSelectors.TASK_ALREADY_EXISTS_MODAL_ERROR);
+    await expect(errorLocator).toHaveText(homePageSelectors.TASK_ALREADY_EXISTS_MODAL_ERROR_MESSAGE);
   }
 
   private async submitTask(locator: Locator, method: 'keyboard' | 'click'): Promise<void> {
