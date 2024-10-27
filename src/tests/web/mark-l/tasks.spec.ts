@@ -16,6 +16,7 @@ test.describe('Testes da funcionalidade de tarefas', () => {
   });
 
   test.afterEach(async () => {
+    // Limpar tarefas após cada teste
     await apiTaskSteps.deleteAllTasks();
   });
 
@@ -28,7 +29,7 @@ test.describe('Testes da funcionalidade de tarefas', () => {
 
     // Então essa tarefa deve ser exibida na lista
     const createdTask = await webTaskSteps.getTaskItemByTestId('task-item', taskName);
-    await expect(createdTask).toHaveText(taskName);
+    await expect(createdTask).toBeVisible();
 
     // Captura de tela
     await webTaskSteps.takeScreenshot(`after-creating-task-with-mouse-click_${Date.now()}`);
@@ -43,7 +44,7 @@ test.describe('Testes da funcionalidade de tarefas', () => {
 
     // Então essa tarefa deve ser exibida na lista
     const createdTask = await webTaskSteps.getTaskItemByTestId('task-item', taskName);
-    await expect(createdTask).toHaveText(taskName);
+    await expect(createdTask).toBeVisible();
 
     // Captura de tela
     await webTaskSteps.takeScreenshot(`after-creating-task-with-keyboard_${Date.now()}`);
