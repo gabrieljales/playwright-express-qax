@@ -49,4 +49,20 @@ test.describe('Testes da funcionalidade de tarefas', () => {
     // Captura de tela
     await webTaskSteps.takeScreenshot(`after-creating-task-with-keyboard_${Date.now()}`);
   });
+
+  test('003 - Verificar mensagem de erro ao tentar cadastrar tarefas duplicadas', async ({ page }) => {
+    // Dado que eu tenho uma nova tarefa
+    const taskName = faker.lorem.sentence();
+
+    // Quando faço o cadastro dessa tarefa duas vezes
+    await webTaskSteps.createTaskWithKeyboard(taskName);
+    await webTaskSteps.createTaskWithKeyboard(taskName);
+
+    // Então uma mensagem de erro deve ser exibida alertando que a tarefa já existe
+    const error = page.locator('#swal2-html-container');
+    await expect(error).toHaveText('Task already exists!');
+
+    // Captura de tela
+    await webTaskSteps.takeScreenshot(`task-already-exists_${Date.now()}`);
+  });
 });
