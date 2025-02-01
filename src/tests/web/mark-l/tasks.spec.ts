@@ -32,11 +32,11 @@ test.describe('Testes da funcionalidade de tarefas', {
   test('001 - Verificar o cadastro de uma nova tarefa via click no botão', {
     tag: ['@create', '@positive']
   }, async () => {
-    // Dado que eu tenho uma nova tarefa
-    // Quando faço o cadastro dessa tarefa
+    // Given que eu tenho uma nova tarefa
+    // When faço o cadastro dessa tarefa
     await webTaskSteps.createTaskWithMouseClick(newTask.name);
 
-    // Então essa tarefa deve ser exibida na lista
+    // Then essa tarefa deve ser exibida na lista
     const createdTask = await webTaskSteps.getTaskItemByTestId('task-item', newTask.name);
     await expect(createdTask).toBeVisible();
 
@@ -47,12 +47,12 @@ test.describe('Testes da funcionalidade de tarefas', {
   test('002 - Verificar o cadastro de uma nova tarefa via teclado apertando enter', {
     tag: ['@create', '@positive']
   }, async () => {
-    // Dado que eu tenho uma nova tarefa
+    // Given que eu tenho uma nova tarefa
 
-    // Quando faço o cadastro dessa tarefa
+    // When faço o cadastro dessa tarefa
     await webTaskSteps.createTaskWithKeyboard(newTask.name);
 
-    // Então essa tarefa deve ser exibida na lista
+    // Then essa tarefa deve ser exibida na lista
     const createdTask = await webTaskSteps.getTaskItemByTestId('task-item', newTask.name);
     await expect(createdTask).toBeVisible();
 
@@ -63,13 +63,13 @@ test.describe('Testes da funcionalidade de tarefas', {
   test('003 - Verificar mensagem de erro ao tentar cadastrar tarefas duplicadas', {
     tag: ['@create', '@negative']
   }, async () => {
-    // Dado que eu tenho uma nova tarefa
+    // Given que eu tenho uma nova tarefa
 
-    // Quando tento fazer o cadastro dessa tarefa duas vezes
+    // When tento fazer o cadastro dessa tarefa duas vezes
     await webTaskSteps.createTaskWithKeyboard(newTask.name);
     await webTaskSteps.createTaskWithKeyboard(newTask.name);
 
-    // Então uma mensagem de erro deve ser exibida alertando que a tarefa já existe
+    // Then uma mensagem de erro deve ser exibida alertando que a tarefa já existe
     await webTaskSteps.verifyTaskAlreadyExistsError();
 
     // Captura de tela
@@ -79,13 +79,13 @@ test.describe('Testes da funcionalidade de tarefas', {
   test('004 - Verificar mensagem de alerta informando que o nome da tarefa é um campo obrigatório', {
     tag: ['@create', '@negative']
   }, async () => {
-    // Dado que eu tenho uma nova tarefa
+    // Given que eu tenho uma nova tarefa
     newTask.name = '';
 
-    // Quando tento fazer o cadastro dessa tarefa sem informar um nome
+    // When tento fazer o cadastro dessa tarefa sem informar um nome
     await webTaskSteps.createTaskWithKeyboard(newTask.name);
 
-    // Então uma mensagem de erro deve ser exibida alertando que o campo é obrigatório
+    // Then uma mensagem de erro deve ser exibida alertando que o campo é obrigatório
     await webTaskSteps.verifyTaskNameIsRequired();
 
     // Captura de tela
@@ -95,8 +95,8 @@ test.describe('Testes da funcionalidade de tarefas', {
   test('005 - Verificar a conclusão de uma tarefa', {
     tag: ['@update', '@positive']
   }, async () => {
-    // Dado que eu tenho uma nova tarefa
-    // Quando faço o cadastro dessa tarefa
+    // Given que eu tenho uma nova tarefa
+    // When faço o cadastro dessa tarefa
     await webTaskSteps.createTaskWithMouseClick(newTask.name);
 
     // Then deve ser possível marcá-la como concluída
@@ -105,6 +105,24 @@ test.describe('Testes da funcionalidade de tarefas', {
 
     // And o status da tarefa deve ter sido alterado e o seu texto deve ficar taxado
     await webTaskSteps.verifyTaskIsDoneByClass(targetTask);
+
+    // Captura de tela
+    await webTaskSteps.takeScreenshot(`toggle-task-done-status_${Date.now()}`);
+  });
+
+  test('006 - Verificar a exclusão de uma tarefa', {
+    tag: ['@delete', '@positive']
+  }, async () => {
+    // Given que eu tenho uma nova tarefa
+    // When faço o cadastro dessa tarefa
+    await webTaskSteps.createTaskWithMouseClick(newTask.name);
+
+    // Then deve ser possível excluí-la ao clicar no ícone de lixeira
+    const targetTask = await webTaskSteps.getTaskItemByTestId('task-item', newTask.name);
+    await webTaskSteps.removeTaskByClicking(targetTask);
+
+    // And a tarefa não deve mais estar presente na lista de tarefas
+    await webTaskSteps.verifyTaskDoesNotExist('task-item', newTask.name);
 
     // Captura de tela
     await webTaskSteps.takeScreenshot(`toggle-task-done-status_${Date.now()}`);
