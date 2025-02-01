@@ -1,9 +1,13 @@
 import { expect, Locator, Page, TestInfo } from "@playwright/test";
-import { homePageSelectors } from "../../../pages/mark-l/homePage";
 import { WEB_BASE_URL } from "../../../constants/constants";
+import { TaskPage } from "../../../pages/mark-l/TaskPage";
 
 export class WebTaskSteps {
-  constructor(private page: Page, private testInfo: TestInfo) {}
+  private taskPage: TaskPage;
+  
+  constructor(private page: Page, private testInfo: TestInfo) {
+    this.taskPage = new TaskPage(page);
+  }
 
   async navigateToHomePage(): Promise<void> {
     await this.page.goto(WEB_BASE_URL);
@@ -21,29 +25,45 @@ export class WebTaskSteps {
     console.log(`Screenshot taken! Path: screenshots/${name}.png`);
   }
 
-  async createTaskWithKeyboard(taskName: string): Promise<void> {
-    const inputTaskField = this.page.locator(homePageSelectors.NEW_TASK_INPUT_ID);
-    await inputTaskField.fill(taskName);
-
-    await this.submitTask(inputTaskField, 'keyboard');
-  }
-
-  async createTaskWithMouseClick(taskName: string): Promise<void> {
-    const inputTaskField = this.page.locator(homePageSelectors.NEW_TASK_INPUT_ID);
-    await inputTaskField.fill(taskName);
-
-    const createButton = this.page.locator(homePageSelectors.CREATE_TASK_BUTTON);
-    await this.submitTask(createButton, 'click');
+  async getLocatorBySelector(selector: string): Promise<Locator> {
+    return this.page.locator(selector);
   }
 
   async getTaskItemByTestId(testId: string, targetText: string): Promise<Locator> {
     return this.page.getByTestId(testId).filter({ hasText: targetText })
   }
 
-  async verifyTaskAlreadyExistsError(): Promise<void> {
-    const errorLocator = this.page.locator(homePageSelectors.TASK_ALREADY_EXISTS_MODAL_ERROR);
-    await expect(errorLocator).toHaveText(homePageSelectors.TASK_ALREADY_EXISTS_MODAL_ERROR_MESSAGE);
+  async createTaskWithKeyboard(taskName: string): Promise<void> {
+    // OBS: newTaskInput e createButton são chamados sem parênteses pois são getters do TS!
+    const inputTaskFieldSelector = this.taskPage.newTaskInput;
+    await inputTaskFieldSelector.fill(taskName);
+
+    await this.submitTask(inputTaskFieldSelector, 'keyboard');
   }
+
+  async createTaskWithMouseClick(taskName: string): Promise<void> {
+    const inputTaskFieldSelector = this.taskPage.newTaskInput;
+    await inputTaskFieldSelector.fill(taskName);
+
+    const createButtonSelector = this.taskPage.createButton;
+    await this.submitTask(createButtonSelector, 'click');
+  }
+
+  async verifyTaskAlreadyExistsError(): Promise<void> {
+    const errorSelector = this.taskPage.taskExistsModalError;
+    const errorMessageSelector = this.taskPage.taskExistsModalErrorMessage;
+    
+    await expect(errorSelector).toHaveText(errorMessageSelector);
+  }
+
+  async verifyTaskNameIsRequired(): Promise<void> {
+    const requiredFieldErrorMessage = this.taskPage.requiredFieldErrorMessage;
+    const inputTaskName = await this.taskPage.newTaskInput;
+    const validationMessage = await inputTaskName.evaluate(element => (element as HTMLInputElement).validationMessage);
+  
+    expect(validationMessage).toEqual(requiredFieldErrorMessage);
+  }
+  
 
   private async submitTask(locator: Locator, method: 'keyboard' | 'click'): Promise<void> {
     if (method === 'keyboard') {
