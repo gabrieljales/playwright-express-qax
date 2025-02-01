@@ -91,4 +91,22 @@ test.describe('Testes da funcionalidade de tarefas', {
     // Captura de tela
     await webTaskSteps.takeScreenshot(`task-required-field_${Date.now()}`);
   });
+
+  test('005 - Verificar a conclusão de uma tarefa', {
+    tag: ['@update', '@positive']
+  }, async () => {
+    // Dado que eu tenho uma nova tarefa
+    // Quando faço o cadastro dessa tarefa
+    await webTaskSteps.createTaskWithMouseClick(newTask.name);
+
+    // Then deve ser possível marcá-la como concluída
+    const targetTask = await webTaskSteps.getTaskItemByTestId('task-item', newTask.name);
+    await webTaskSteps.toggleTheTaskToDoneStatus(targetTask);
+
+    // And o status da tarefa deve ter sido alterado e o seu texto deve ficar taxado
+    await webTaskSteps.verifyTaskIsDoneByClass(targetTask);
+
+    // Captura de tela
+    await webTaskSteps.takeScreenshot(`toggle-task-done-status_${Date.now()}`);
+  });
 });
