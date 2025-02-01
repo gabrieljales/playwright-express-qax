@@ -70,9 +70,21 @@ export class WebTaskSteps {
     await toggleButton.click();
   }
 
-  async verifyTaskIsDoneByClass(task: Locator) {
+  async verifyTaskIsDoneByClass(task: Locator): Promise<void> {
     const toggleButton = task.locator(this.taskPage.toggleButton);
     await expect(toggleButton).toHaveClass(/listItemToggleSelected/);
+  }
+
+  async removeTaskByClicking(task: Locator): Promise<void> {
+    const deleteButton = task.locator(this.taskPage.deleteButton);
+    await deleteButton.click();
+  }
+
+  async verifyTaskDoesNotExist(testId: string, taskName: string) {
+    const targetTask = await this.getTaskItemByTestId(testId, taskName);
+    
+    // Verifica que a task foi removida do DOM
+    await expect(targetTask).not.toBeAttached();
   }
 
   private async submitTask(locator: Locator, method: 'keyboard' | 'click'): Promise<void> {
