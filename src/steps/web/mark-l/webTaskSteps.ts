@@ -58,12 +58,22 @@ export class WebTaskSteps {
 
   async verifyTaskNameIsRequired(): Promise<void> {
     const requiredFieldErrorMessage = this.taskPage.requiredFieldErrorMessage;
-    const inputTaskName = await this.taskPage.newTaskInput;
+    const inputTaskName = this.taskPage.newTaskInput;
     const validationMessage = await inputTaskName.evaluate(element => (element as HTMLInputElement).validationMessage);
   
     expect(validationMessage).toEqual(requiredFieldErrorMessage);
   }
-  
+
+  async toggleTheTaskToDoneStatus(task: Locator): Promise<void> {
+    const toggleButton = task.locator(this.taskPage.toggleButton);
+
+    await toggleButton.click();
+  }
+
+  async verifyTaskIsDoneByClass(task: Locator) {
+    const toggleButton = task.locator(this.taskPage.toggleButton);
+    await expect(toggleButton).toHaveClass(/listItemToggleSelected/);
+  }
 
   private async submitTask(locator: Locator, method: 'keyboard' | 'click'): Promise<void> {
     if (method === 'keyboard') {
