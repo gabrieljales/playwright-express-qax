@@ -12,6 +12,10 @@ export class TaskPage {
     return this.page.locator(taskPageSelectors.CREATE_TASK_BUTTON);
   }
 
+  get toggleButton() {
+    return this.page.locator(taskPageSelectors.TASK_TOGGLE_BUTTON);
+  }
+
   get taskExistsModalError() {
     return this.page.locator(taskPageSelectors.TASK_ALREADY_EXISTS_MODAL_ERROR);
   }

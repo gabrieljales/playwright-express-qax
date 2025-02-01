@@ -4,4 +4,5 @@ export const taskPageSelectors = {
   TASK_ALREADY_EXISTS_MODAL_ERROR: '#swal2-html-container',
   TASK_ALREADY_EXISTS_MODAL_ERROR_MESSAGE: 'Task already exists!',
   REQUIRED_FIELD_ERROR_MESSAGE: 'This is a required field',
+  TASK_TOGGLE_BUTTON: 'button[class*="listItemToggle"]',
 };
