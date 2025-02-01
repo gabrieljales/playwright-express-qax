@@ -75,4 +75,20 @@ test.describe('Testes da funcionalidade de tarefas', {
     // Captura de tela
     await webTaskSteps.takeScreenshot(`task-already-exists_${Date.now()}`);
   });
+
+  test('004 - Verificar mensagem de alerta informando que o nome da tarefa é um campo obrigatório', {
+    tag: ['@create', '@negative']
+  }, async () => {
+    // Dado que eu tenho uma nova tarefa
+    newTask.name = '';
+
+    // Quando tento fazer o cadastro dessa tarefa sem informar um nome
+    await webTaskSteps.createTaskWithKeyboard(newTask.name);
+
+    // Então uma mensagem de erro deve ser exibida alertando que o campo é obrigatório
+    await webTaskSteps.verifyTaskNameIsRequired();
+
+    // Captura de tela
+    await webTaskSteps.takeScreenshot(`task-required-field_${Date.now()}`);
+  });
 });
